@@ -101,7 +101,7 @@ foreach ($data as $record) {
 
                 if (!$client->getConfig()['createHostedZone']) {
                     $log->warn("Skip zone {$zoneName}: createHostedZone not allowed in script.");
-                    continue;
+                    continue 2;
                 }
 
                 try {
@@ -115,7 +115,7 @@ foreach ($data as $record) {
                     }
 
                     $log->err("Failed zone creation {$zoneName}: {$e->getMessage()}");
-                    continue;
+                    continue 2;
                 }
 
                 $log->info("Zone created: {$zoneName}\n");
@@ -180,6 +180,8 @@ foreach ($data as $record) {
                     $value = array_reduce(str_split($opt . $rr->value, 255), function ($carry, $chunk) {
                         return ($carry == '' ? '' : $carry . ' ') . '"' . $chunk . '"';
                     }, '');
+                } elseif ('CAA' == $rr->type) {
+                    $value = "{$opt}\"{$rr->value}\"";
                 } else {
                     $value = "{$opt}{$rr->value}";
                 }
@@ -212,7 +214,7 @@ foreach ($data as $record) {
 
             if (!$client->getConfig()['changeResourceRecordSets']) {
                 $log->warn("Skip zone {$zoneName}: changeResourceRecordSets not allowed in script.\n");
-                continue;
+                continue 2;
             }
 
             /**
@@ -229,7 +231,7 @@ foreach ($data as $record) {
                 }
             } catch (Exception  $e) {
                 $log->err("Failed zone update {$zoneName}: {$e->getMessage()}\n");
-                continue;
+                continue 2;
             }
 
             $log->info("ResourceRecordSet updated: {$zoneName}\n");
@@ -241,7 +243,7 @@ foreach ($data as $record) {
             $zoneId = $client->getZoneId(strtolower($zoneName));
 
             if (!$zoneId) {
-                continue;
+                continue 2;
             }
 
             if ($client->getConfig()['changeResourceRecordSets']) {
@@ -258,13 +260,13 @@ foreach ($data as $record) {
                     }
                 } catch (Modules_Route53_Exception $e) {
                     $log->err("Failed zone removal {$zoneName}: {$e->getMessage()}\n");
-                    continue;
+                    continue 2;
                 }
             }
 
             if (!$client->getConfig()['deleteHostedZone']) {
                 $log->warn("Skip zone {$zoneName}: deleteHostedZone not allowed in script.\n");
-                continue;
+                continue 2;
             }
 
             try {
@@ -273,7 +275,7 @@ foreach ($data as $record) {
                 ));
             } catch (Modules_Route53_Exception $e) {
                 $log->err("Failed zone removal {$zoneName}: {$e->getMessage()}\n");
-                continue;
+                continue 2;
             }
 
             $log->info("Zone deleted: {$zoneName}\n");
