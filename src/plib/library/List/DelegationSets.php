@@ -51,7 +51,7 @@ class Modules_Route53_List_DelegationSets extends pm_View_List_Simple
             $ipAddresses = array_map('gethostbyname', $nameServers);
             $urlId = urlencode($delegationsSetId);
             $isDefault = $delegationsSetId == pm_Settings::get('delegationSet');
-			$limit = Modules_Route53_Client::factory()->getDelegationSetLimit($delegationsSetId)
+            $limit = Modules_Route53_Client::factory()->getDelegationSetLimit($delegationsSetId);
             $data[] = [
                 'nameServers' => implode("<br>", $nameServers),
                 'ipAddresses' => implode("<br>", $ipAddresses),

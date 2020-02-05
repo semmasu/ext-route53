@@ -149,10 +149,10 @@ class Modules_Route53_Client
 	
 	public function getDelegationSetLimit($delegationsSetId)
 	{
-		$apiResponse = $this->__call('getReusableDelegationSetLimit', [
-			'DelegationSetId' => $delegationsSetId
-			'Type' => 'MAX_ZONES_BY_REUSABLE_DELEGATION_SET'
-		]);
+		$apiResponse = $this->__call('getReusableDelegationSetLimit', [[
+			'DelegationSetId' => $delegationsSetId,
+			'Type' => 'MAX_ZONES_BY_REUSABLE_DELEGATION_SET',
+		]]);
 		return (object) [
 			'currentCount' => $apiResponse['Count'],
 			'maxCount' => $apiResponse['Limit']['Value'],
